@@ -63,3 +63,21 @@ d.ts = declaration file
 
 1. type 정의
    const { coinId } = useParams<{ coinId: string }>();
+
+1. 기본값 제거, 글꼴 import
+   const GlobalStyle = createGlobalStyle`@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Source+Sans+Pro:ital,wght@0,300;1,400&display=swap');
+
+   - {
+     box-sizing: border-box;
+     }
+     body {
+     font-family: 'Source Sans Pro', sans-serif;
+     }
+     a {
+     text-decoration: none;
+     color: inherit;
+     }
+     `;
+
+1. right arrow
+   &rarr;
