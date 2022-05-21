@@ -1,8 +1,10 @@
 import styled from "styled-components";
+import Helmet from "react-helmet";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
+import { fetchCoins } from "../api";
 
-interface CoinInterface {
+interface ICoin {
   id: string;
   name: string;
   symbol: string;
@@ -13,27 +15,25 @@ interface CoinInterface {
 }
 
 function Coins() {
-  const [coins, setCoins] = useState<CoinInterface[]>([]);
-  const [loading, setLoading] = useState(true);
+  //useQuery hook fetcher 함수를 불러온다.
+  //fetcher함수가 loading 중이면 react query는 알려준다.
+  //fetcher 불러오는게 끝나면 json을  data에 넣어준다.
+  // loading 안 보이는 이유 데이터를 캐시에 저장
+  const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
 
-  useEffect(() => {
-    (async () => {
-      const response = await fetch("https://api.coinpaprika.com/v1/coins");
-      const json = await response.json();
-      setCoins(json.slice(0, 20));
-      setLoading(false);
-    })();
-  }, []);
   return (
     <Container>
+      <Helmet>
+        <title>코인</title>
+      </Helmet>
       <Header>
         <Title>코인</Title>
       </Header>
-      {loading ? (
+      {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <CoinsList>
-          {coins.map((coin) => (
+          {data?.slice(0, 20).map((coin) => (
             <Coin key={coin.id}>
               <Link to={`/${coin.id}`} state={{ name: coin.name }}>
                 <Image
