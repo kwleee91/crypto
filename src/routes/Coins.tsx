@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import Helmet from "react-helmet";
-import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import { fetchCoins } from "../api";
+import { Link } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 interface ICoin {
   id: string;
@@ -21,74 +23,93 @@ function Coins() {
   // loading 안 보이는 이유 데이터를 캐시에 저장
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
 
+  const isDark = useRecoilValue(isDarkAtom);
+  const isDarkSet = useSetRecoilState(isDarkAtom);
+  const toggleDark = () => isDarkSet((current) => !current);
+
   return (
     <Container>
       <Helmet>
-        <title>코인</title>
+        <title>COIN</title>
       </Helmet>
       <Header>
-        <Title>코인</Title>
+        <div style={{ width: "20px" }}></div>
+        <Title>CRYPTO TRACKER</Title>
+        <ToggleBtn onClick={toggleDark}>{isDark ? "🔅" : "🌙"}</ToggleBtn>
       </Header>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
-        <CoinsList>
+        <CoinList>
           {data?.slice(0, 20).map((coin) => (
             <Coin key={coin.id}>
               <Link to={`/${coin.id}`} state={{ name: coin.name }}>
+                <span className="rank">{coin.rank}</span>
                 <Image
                   src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
                   alt={coin.name}
                 />
-                {coin.name}
-                &rarr;
+                <span className="symbol">{coin.symbol}</span>
+                <span className="name">({coin.name})</span>
               </Link>
             </Coin>
           ))}
-        </CoinsList>
+        </CoinList>
       )}
     </Container>
   );
 }
 
 const Container = styled.div`
-  padding: 0px 20px;
   max-width: 480px;
-  margin: 0 auto;
+  padding: 0px 20px;
+  margin: 32px auto;
 `;
 const Header = styled.header`
-  height: 10vh;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 30px;
 `;
 
 const Title = styled.h1`
-  font-size: 48px;
-  color: ${(props) => props.theme.accentColor};
+  font-size: 28px;
+  color: ${(props) => props.theme.textColor};
 `;
 
-const CoinsList = styled.ul``;
-
-const Image = styled.img`
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
+const ToggleBtn = styled.button`
+  border: none;
+  background-color: transparent;
+  font-size: 20px;
 `;
+
+const CoinList = styled.ul`
+  width: 100%;
+`;
+
 const Coin = styled.li`
-  background-color: white;
-  color: ${(props) => props.theme.bgColor};
   padding: 20px;
-  border-radius: 15px;
   margin-bottom: 10px;
-  transition: color 0.3s ease-in;
+  border-radius: 15px;
+  font-size: 28px;
+  background-color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.bgColor};
   a {
     display: flex;
     align-items: center;
+    .name {
+      font-size: 20px;
+    }
   }
   &:hover {
     color: ${(props) => props.theme.accentColor};
   }
+`;
+
+const Image = styled.img`
+  width: 30px;
+  height: 30px;
+  margin: 0 10px;
 `;
 
 const Loader = styled.span`

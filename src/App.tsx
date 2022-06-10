@@ -1,11 +1,13 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
+import { darkTheme, lightTheme } from "./theme";
 import Router from "./Router";
 import { ReactQueryDevtools } from "react-query/devtools";
-// 캐시에서 무엇을 가지고 있는지 확인 가능하다.
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./atoms";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Source+Sans+Pro:ital,wght@0,300;1,400&display=swap');
-  html, body, div, span, applet, object, iframe,
+html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
@@ -54,11 +56,7 @@ table {
 }
 * {
   box-sizing: border-box;
-}
-body {
-  font-family: 'Source Sans Pro', sans-serif;
-	background-color: ${(props) => props.theme.bgColor};
-	color: ${(props) => props.theme.textColor};
+	transition: all 0.1s linear;
 }
 a {
   text-decoration: none;
@@ -67,11 +65,14 @@ a {
 `;
 
 function App() {
+  const isDark = useRecoilValue(isDarkAtom);
   return (
     <>
-      <GlobalStyle />
-      <Router />
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <GlobalStyle />
+        <Router />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </ThemeProvider>
     </>
   );
 }

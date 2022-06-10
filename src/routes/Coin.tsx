@@ -6,6 +6,8 @@ import Chart from "./Chart";
 import Price from "./Price";
 import { useQuery } from "react-query";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 interface ILocation {
   state: {
@@ -108,7 +110,6 @@ function Coin() {
       refetchInterval: 5000,
     }
   );
-
   // const [info, setInfo] = useState<InfoData>();
   // const [priceInfo, setPriceInfo] = useState<PriceData>();
   // const [loading, setLoading] = useState(true);
@@ -129,6 +130,10 @@ function Coin() {
   // }, [coinId]);
 
   const loading = infoLoading || tickersLoading;
+
+  const isDark = useRecoilValue(isDarkAtom);
+  const isDarkSet = useSetRecoilState(isDarkAtom);
+  const toggleDark = () => isDarkSet((current) => !current);
   return (
     <Container>
       {/* head 로 가는 direct link */}
@@ -139,14 +144,12 @@ function Coin() {
       </Helmet>
       <Header>
         <Link to="/">
-          <ImgWrapper>
-            <img src="/img/next.png" alt="arrow" />
-          </ImgWrapper>
+          <ImgWrapper>◀</ImgWrapper>
         </Link>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>
-        <div />
+        <ToggleBtn onClick={toggleDark}>{isDark ? "🔅" : "🌙"}</ToggleBtn>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
@@ -218,11 +221,18 @@ const ImgWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 32px;
 `;
 
 const Title = styled.h1`
-  font-size: 48px;
-  color: ${(props) => props.theme.accentColor};
+  font-size: 38px;
+  color: ${(props) => props.theme.textColor};
+`;
+
+const ToggleBtn = styled.button`
+  border: none;
+  background-color: transparent;
+  font-size: 20px;
 `;
 
 const Loader = styled.span`
@@ -233,7 +243,7 @@ const Loader = styled.span`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   padding: 10px 20px;
   border-radius: 10px;
 `;
@@ -264,11 +274,10 @@ const Tab = styled.span<{ isActive: boolean }>`
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 400;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   padding: 7px 0px;
   border-radius: 10px;
-  color: ${(props) =>
-    props.isActive ? props.theme.accentColor : props.theme.textColor};
+  color: ${(props) => (props.isActive ? "orange" : props.theme.textColor)};
   a {
     display: block;
   }
