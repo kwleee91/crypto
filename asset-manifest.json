@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/typescript-masterclass/static/js/main.5d7559a1.js",
+    "index.html": "/typescript-masterclass/index.html",
+    "main.5d7559a1.js.map": "/typescript-masterclass/static/js/main.5d7559a1.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.5d7559a1.js"
+  ]
+}
